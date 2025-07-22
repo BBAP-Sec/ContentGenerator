@@ -1,0 +1,640 @@
+{
+  "name": "DevOps LinkedIn Content Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -260,
+        -20
+      ],
+      "id": "6a27ed3d-3fb8-44ae-8039-8a935be3bf64",
+      "name": "When chat message received",
+      "webhookId": "e2eca1f5-f82a-444a-9037-ee6c089dd885"
+    },
+    {
+      "parameters": {
+        "url": "=https://google.com/complete/search?output=toolbar&gl=US&q={{ $json.searchQuery }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        60
+      ],
+      "id": "d2049ffa-22f1-47ac-a967-3c305c9b127a",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.xml",
+      "typeVersion": 1,
+      "position": [
+        700,
+        60
+      ],
+      "id": "33c51170-0d27-4028-94f4-0a9f59c8bfe7",
+      "name": "XML"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "toplevel.CompleteSuggestion",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        920,
+        60
+      ],
+      "id": "aee4f502-a76b-4e2e-a629-80f975795582",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a935fc96-7bc9-4dcd-90b3-9a6c9c1f0567",
+              "name": "Keywords",
+              "value": "={{ $json.suggestion.data }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1140,
+        60
+      ],
+      "id": "9f245ca3-db80-4dd6-becb-ad48e19e69e9",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "Keywords"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        60
+      ],
+      "id": "742ede8b-fe5b-49af-a4c2-9ddc871af009",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyD0YqMySGnCQQ14Yl5P3sDXbDmQZgpcRoU",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"Craft a professional and insightful LinkedIn post (max 1200 characters) about: {{ $json.Keywords }}. Start with a compelling statement or a concise, intriguing question that immediately grabs attention without using common phrases like 'Level up' or 'Boost your game'. The post should provide a key takeaway or a practical tip relevant to DevOps professionals. Use a conversational yet authoritative tone. Conclude with a specific, open-ended question that encourages genuine discussion or invites personal anecdotes, avoiding predictable prompts like 'What's your biggest challenge?' or 'What's your one tip?'. Include 3-5 relevant industry hashtags. Ensure the content feels authentic and provides actionable value.\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1580,
+        60
+      ],
+      "id": "34e51467-13e1-4cdd-9ec2-568bf5c5087f",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "candidates[0].content.parts",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1780,
+        60
+      ],
+      "id": "55e3090c-fb52-48ec-a0aa-10ec801a41fb",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "chatId": "249098649",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2020,
+        60
+      ],
+      "id": "b4289188-c2c7-44ae-a661-46d65dd60fe3",
+      "name": "Send a text message",
+      "webhookId": "3acb5675-e7df-4974-89b7-1eb8a1398502",
+      "credentials": {
+        "telegramApi": {
+          "id": "gXuU8h5M6lwYEI5G",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 11
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -260,
+        160
+      ],
+      "id": "5512145f-bedb-4307-ad40-eb72c540005b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a7d0847b-1cc3-4c55-906a-bd3d1b503c60",
+              "name": "topic",
+              "value": "devops",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -60,
+        160
+      ],
+      "id": "e5004660-3221-464e-94c7-ee8183a5a296",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a461ee49-2007-40d6-8efc-d80479165d5c",
+              "name": "searchQuery",
+              "value": "={{ $json.chatInput || $json.topic }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        60
+      ],
+      "id": "bd698824-c5dc-4b4b-ad98-79582269fe13",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyD0YqMySGnCQQ14Yl5P3sDXbDmQZgpcRoU",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"Generate an engaging LinkedIn post (max 1100 characters) exploring the common challenges and innovative solutions related to: {{ $json.Keywords }} in a DevOps context. Begin with a relatable anecdote or a surprising statistic to hook the reader, rather than generic introductory phrases. Share a truly unique personal insight or a commonly overlooked aspect. Conclude by posing a nuanced question that invites professionals to share their specific strategies or experiences, moving beyond 'What's your biggest hurdle?'. Use 3-4 relevant and precise hashtags. The language must be natural, empathetic, and entirely non-promotional.\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1580,
+        240
+      ],
+      "id": "17a6a46a-6f8e-4532-ab3f-5ccd7a212e56",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "candidates[0].content.parts",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1780,
+        240
+      ],
+      "id": "54c5a5a3-16c4-4856-94aa-dfdbea8daba8",
+      "name": "Split Out2"
+    },
+    {
+      "parameters": {
+        "chatId": "249098649",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2040,
+        240
+      ],
+      "id": "80991517-f795-443a-be44-f758c833d902",
+      "name": "Send a text message1",
+      "webhookId": "3acb5675-e7df-4974-89b7-1eb8a1398502",
+      "credentials": {
+        "telegramApi": {
+          "id": "gXuU8h5M6lwYEI5G",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyD0YqMySGnCQQ14Yl5P3sDXbDmQZgpcRoU",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"Write a concise and impactful LinkedIn post (max 1000 characters) on: {{ $json.Keywords }}. Start with an unexpected observation, a provocative statement, or a direct, challenging question that immediately resonates with a nuanced pain point or a less-discussed aspiration of DevOps practitioners, avoiding clichés like 'Feeling stuck', 'Level up your game', or 'Want a clearer path?'. Structure it with a compelling hook and 2-3 distinct main points presented clearly using line breaks and Unicode bullet points (like '•' or '-'), but do not use any markdown formatting characters like * or _ that might break the output in Telegram. Conclude with a fresh, highly specific call to action or a unique, analytical question that encourages detailed replies. Utilize line breaks for optimal readability and strategically incorporate 1-2 relevant emojis (e.g., 💡, 🛠️). Focus intensely on providing novel, tangible, and actionable value to DevOps practitioners. Absolutely ensure it does not sound like an advertisement, a templated response, or a generic self-help prompt.\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1580,
+        440
+      ],
+      "id": "73cca024-4da0-43c8-b1d6-fa152371ca23",
+      "name": "HTTP Request3"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "candidates[0].content.parts",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1800,
+        440
+      ],
+      "id": "cc142e5c-b5c1-463b-9341-44a168a2b40c",
+      "name": "Split Out3"
+    },
+    {
+      "parameters": {
+        "chatId": "249098649",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2040,
+        440
+      ],
+      "id": "6f5f66c0-1e83-4cf2-a2cb-2150780d4cfd",
+      "name": "Send a text message2",
+      "webhookId": "3acb5675-e7df-4974-89b7-1eb8a1398502",
+      "credentials": {
+        "telegramApi": {
+          "id": "gXuU8h5M6lwYEI5G",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyD0YqMySGnCQQ14Yl5P3sDXbDmQZgpcRoU",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"You are a seasoned DevOps architect sharing practical wisdom. Write a LinkedIn post (max 1200 characters) about a commonly overlooked or often-misunderstood aspect of: {{ $json.Keywords }}. Your primary goal is to simplify a complex concept and ignite a deeper, more professional conversation among fellow practitioners, moving beyond surface-level discussions. Adopt a knowledgeable, reflective, and slightly formal yet approachable tone, conveying gravitas without being dry. Conclude with an intriguing, open-ended question that prompts specific examples, challenges, or nuanced insights from their own experiences, explicitly avoiding questions like 'What's your biggest aha moment?' or 'What are your thoughts?'. Include 3-5 relevant and highly specific hashtags. The post must feel like a genuine, authoritative share, grounded in experience, not a generated script or a quiz.\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1580,
+        660
+      ],
+      "id": "ec907203-6d95-42cb-bdba-cb7e4284f78b",
+      "name": "HTTP Request4"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "candidates[0].content.parts",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1800,
+        660
+      ],
+      "id": "c8c635eb-8248-4aba-8e95-fca14a5c2cfe",
+      "name": "Split Out4"
+    },
+    {
+      "parameters": {
+        "chatId": "249098649",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2060,
+        660
+      ],
+      "id": "f107ec15-4cb5-47ed-8bd7-ac44d50a0ca6",
+      "name": "Send a text message3",
+      "webhookId": "3acb5675-e7df-4974-89b7-1eb8a1398502",
+      "credentials": {
+        "telegramApi": {
+          "id": "gXuU8h5M6lwYEI5G",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "XML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "XML": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "Split Out3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out3": {
+      "main": [
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "Split Out4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out4": {
+      "main": [
+        [
+          {
+            "node": "Send a text message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Amsterdam",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "a192dfb1-5101-4e02-ad8b-878ae0cca82d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "83cef96c4d248a9cf964b1c1054cd6a906fdb572535f707fd5081af71bec71a5"
+  },
+  "id": "oJuAwqTUlUQY8L44",
+  "tags": []
+}
