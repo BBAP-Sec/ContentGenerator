@@ -1,6 +1,6 @@
 # Content Generator
 
-![Workflow Preview](./ContentGen.PNG)
+![Workflow Preview](./ContentGen.png)
 
 ## Overview
 
