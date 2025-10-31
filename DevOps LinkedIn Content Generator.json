@@ -104,7 +104,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyD0YqMySGnCQQ14Yl5P3sDXbDmQZgpcRoU",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=YOUR_API_KEY",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -159,7 +159,7 @@
       "webhookId": "3acb5675-e7df-4974-89b7-1eb8a1398502",
       "credentials": {
         "telegramApi": {
-          "id": "gXuU8h5M6lwYEI5G",
+          "id": "YOUR_TELEGRAM_ID",
           "name": "Telegram account"
         }
       }
@@ -232,7 +232,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyD0YqMySGnCQQ14Yl5P3sDXbDmQZgpcRoU",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=YOUR_API_KEY",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -287,7 +287,7 @@
       "webhookId": "3acb5675-e7df-4974-89b7-1eb8a1398502",
       "credentials": {
         "telegramApi": {
-          "id": "gXuU8h5M6lwYEI5G",
+          "id": "YOUR_TELEGRAM_ID",
           "name": "Telegram account"
         }
       }
@@ -295,7 +295,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyD0YqMySGnCQQ14Yl5P3sDXbDmQZgpcRoU",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=YOUR_API_KEY",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -350,7 +350,7 @@
       "webhookId": "3acb5675-e7df-4974-89b7-1eb8a1398502",
       "credentials": {
         "telegramApi": {
-          "id": "gXuU8h5M6lwYEI5G",
+          "id": "YOUR_TELEGRAM_ID",
           "name": "Telegram account"
         }
       }
@@ -358,7 +358,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyD0YqMySGnCQQ14Yl5P3sDXbDmQZgpcRoU",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=YOUR_API_KEY",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -413,7 +413,7 @@
       "webhookId": "3acb5675-e7df-4974-89b7-1eb8a1398502",
       "credentials": {
         "telegramApi": {
-          "id": "gXuU8h5M6lwYEI5G",
+          "id": "YOUR_TELEGRAM_ID",
           "name": "Telegram account"
         }
       }
